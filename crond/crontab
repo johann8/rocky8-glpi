@@ -1,0 +1,7 @@
+# GLPI - Run autojobs
+*/2 * * * * root /usr/bin/php -c /etc/php.ini /var/www/html/front/cron.php 
+#*/5 * * * * root /usr/bin/php -c /etc/php.ini /var/www/html/front/cron.php --forcequeudnotification 
+#*/5 * * * * root /usr/bin/php -c /etc/php.ini /var/www/html/front/cron.php --forcemailgate
+
+# Run GLPI Database backup
+0 1 * * * root /backup.sh  

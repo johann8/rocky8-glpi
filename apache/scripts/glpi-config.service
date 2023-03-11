@@ -1,0 +1,12 @@
+[Unit]
+Description=GLPI Config
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -c /opt/glpi-entrypoint.sh
+PassEnvironment=POST_MAX_FILESIZE UPLOAD_MAX_FILESIZE MARIADB_HOST MARIADB_PORT MARIADB_USER MARIADB_PASSWORD MARIADB_DATABASE
+RemainAfterExit=false
+StandardOutput=journal
+
+[Install]
+WantedBy=multi-user.target

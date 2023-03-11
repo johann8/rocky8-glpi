@@ -1,0 +1,69 @@
+version: "3.5"
+networks:
+   glpiNet:
+     ipam:
+       driver: default
+       config:
+         # Subnet Festlegen
+         - subnet: ${SUBNET}.0/24
+   mariadb_mysql-net:
+     external: true
+
+services:
+#
+### === GLPI ===
+#
+  glpi:
+    build: apache/
+    image: johann8/glpi:${VERSION}
+    restart: unless-stopped
+    #volumes:
+    #  - ${DOCKERDIR}/data/glpi-files:/var/www/html/files:rw
+    #  - ${DOCKERDIR}/data/glpi-plugins:/var/www/html/plugins:rw
+    #  - ${DOCKERDIR}/data/glpi-config:/var/www/html/config:rw
+    environment:
+      GLPI_LANG: ${GLPI_LANG}
+      TZ: ${TZ}
+      MARIADB_HOST: ${MARIADB_HOST}
+      MARIADB_PORT: ${MARIADB_PORT}
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+      VERSION: ${VERSION}
+      UPLOAD_MAX_FILESIZE: ${UPLOAD_MAX_FILESIZE}
+      POST_MAX_FILESIZE: ${POST_MAX_FILESIZE}
+      #PLUGINS: ${PLUGINS}
+    ports:
+      - ${PORT}:80
+    networks:
+      glpiNet:
+        #ipv4_address: ${SUBNET}.2
+        aliases:
+          - glpi
+      mariadb_mysql-net:
+
+#
+### === CRON ===
+#
+  crond:
+    build: crond/
+    image: johann8/glpi:${VERSION}-crond
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ}
+      MARIADB_HOST: ${MARIADB_HOST}
+      MARIADB_PORT: ${MARIADB_PORT}
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+    #volumes:
+    #  - ${DOCKERDIR}/data/glpi-files:/var/www/html/files:rw
+    #  - ${DOCKERDIR}/data/glpi-plugins:/var/www/html/plugins:rw
+    #  - ${DOCKERDIR}/data/glpi-config:/var/www/html/config:rw
+    networks:
+      glpiNet:
+        # Feste IP setzen
+        #ipv4_address: 172.26.2.3
+        aliases:
+          - glpi
+      mariadb_mysql-net:
