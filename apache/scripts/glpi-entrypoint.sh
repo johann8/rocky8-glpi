@@ -12,27 +12,27 @@ ConfigDataBase () {
         echo "   public \$dbdefault  = \"${MARIADB_DATABASE}\";"; \
         echo "}"; \
         echo ; 
-      } > /var/www/html/config/config_db.php
+      } > /var/www/glpi/config/config_db.php
 
 }
 
 
 VerifyDir () {
 
-  DIR="/var/www/html/files/_cron
-  /var/www/html/files/_dumps
-  /var/www/html/files/_graphs
-  /var/www/html/files/_log
-  /var/www/html/files/_lock
-  /var/www/html/files/_pictures
-  /var/www/html/files/_plugins
-  /var/www/html/files/_rss
-  /var/www/html/files/_tmp
-  /var/www/html/files/_uploads
-  /var/www/html/files/_cache
-  /var/www/html/files/_sessions
-  /var/www/html/files/_locales
-  /var/www/html/files/_inventories"
+  DIR="/var/www/glpi/files/_cron
+  /var/www/glpi/files/_dumps
+  /var/www/glpi/files/_graphs
+  /var/www/glpi/files/_log
+  /var/www/glpi/files/_lock
+  /var/www/glpi/files/_pictures
+  /var/www/glpi/files/_plugins
+  /var/www/glpi/files/_rss
+  /var/www/glpi/files/_tmp
+  /var/www/glpi/files/_uploads
+  /var/www/glpi/files/_cache
+  /var/www/glpi/files/_sessions
+  /var/www/glpi/files/_locales
+  /var/www/glpi/files/_inventories"
 
   for i in $DIR
   do 
@@ -47,17 +47,17 @@ VerifyDir () {
 
 VerifyKey () {
 
-  if [ ! -e /var/www/html/config/glpicrypt.key ]
+  if [ ! -e /var/www/glpi/config/glpicrypt.key ]
   then
-    php -c /etc/php.ini /var/www/html/bin/console glpi:security:change_key --no-interaction
+    php -c /etc/php.ini /var/www/glpi/bin/console glpi:security:change_key --no-interaction
   fi
 
 }
 
 SetPermissions () {
   echo -n "Setting chown in files and plugins... "
-  chown -R apache:apache /var/www/html/files
-  chown -R apache:apache /var/www/html/plugins
+  chown -R apache:apache /var/www/glpi/files
+  chown -R apache:apache /var/www/glpi/plugins
   echo "[done]"
 
 }
@@ -75,12 +75,12 @@ echo [ done ]
 VerifyDir
 
 # Delete installation file "install.php" if glpi is already installed
-if [[ -e "/var/www/html/config/glpicrypt.key" ]]
+if [[ -e "/var/www/glpi/config/glpicrypt.key" ]]
 then
    echo "GLPI has already been installed."
    echo "GLPI installation \"install.php\" file will be deleted."
    echo -n "Deleting \"install.php\" file... " 
-   rm -rf /var/www/html/install/install.php
+   rm -rf /var/www/glpi/install/install.php
    echo "[done]"
 else
    echo "GLPI is not installed yet."
@@ -138,8 +138,8 @@ echo
 #fi
 
 ### Setup crond
-#echo "*/2 * * * * root /usr/bin/php -c /etc/php.ini /var/www/html/front/cron.php" > /etc/cron.d/glpi
-#echo "*/5 * * * * root /usr/bin/php -c /etc/php.ini /var/www/html/front/cron.php --forcequeudnotification" >> /etc/cron.d/glpi
-#echo "*/5 * * * * root /usr/bin/php -c /etc/php.ini /var/www/html/front/cron.php --forcemailgate" >> /etc/cron.d/glpi
+#echo "*/2 * * * * root /usr/bin/php -c /etc/php.ini /var/www/glpi/front/cron.php" > /etc/cron.d/glpi
+#echo "*/5 * * * * root /usr/bin/php -c /etc/php.ini /var/www/glpi/front/cron.php --forcequeudnotification" >> /etc/cron.d/glpi
+#echo "*/5 * * * * root /usr/bin/php -c /etc/php.ini /var/www/glpi/front/cron.php --forcemailgate" >> /etc/cron.d/glpi
 
 #httpd -D FOREGROUND
