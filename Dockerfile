@@ -71,11 +71,11 @@ RUN sed -E -i -e 's/;listen.owner = nobody/listen.owner = apache/g' /etc/php-fpm
 ADD https://github.com/glpi-project/glpi/releases/download/${GLPI_VERSION}/glpi-${GLPI_VERSION}.tgz /tmp/
 
 RUN tar -zxf /tmp/glpi-${GLPI_VERSION}.tgz -C /tmp/ \
- && mv /tmp/glpi/* /var/www/html/ \
- && chown -R apache:apache /var/www/html \
+ && mv /tmp/glpi /var/www/glpi \
+ && chown -R apache:apache /var/www/glpi/ \
  && rm -rf /tmp/glpi-${GLPI_VERSION}.tgz
 
-VOLUME [ "/var/www/html/files", "/var/www/html/plugins", "/sys/fs/cgroup" ]
+VOLUME [ "/var/www/glpi/files", "/var/www/glpi/plugins", "/sys/fs/cgroup" ]
 
 COPY apache/scripts/change_upload_max_filesize.php apache/scripts/default_upload_max_filesize.php apache/scripts/glpi-entrypoint.sh /opt/ 
 COPY apache/scripts/glpi-config.service /usr/lib/systemd/system/
@@ -88,18 +88,12 @@ RUN chmod 755 /opt/glpi-entrypoint.sh \
  #&& sed -E -i -e '/ExecStartPost=/a\PassEnvironment=POST_MAX_FILESIZE UPLOAD_MAX_FILESIZE MARIADB_HOST MARIADB_PORT MARIADB_USER MARIADB_PASSWORD MARIADB_DATABASE' /usr/lib/systemd/system/php-fpm.service \
  #&& sed -E -i -e '/ExecReload=/a\ExecStartPost=/bin/bash -c "/opt/glpi-entrypoint.sh"' /usr/lib/systemd/system/httpd.service \
  #&& sed -E -i -e '/ExecStartPost=/a\PassEnvironment=POST_MAX_FILESIZE UPLOAD_MAX_FILESIZE MARIADB_HOST MARIADB_PORT MARIADB_USER MARIADB_PASSWORD MARIADB_DATABASE' /usr/lib/systemd/system/httpd.service \
- #&& systemctl enable httpd.service \
- #&& systemctl enable php-fpm.service \
- #&& systemctl enable crond.service
- #&& systemctl enable glpi-config.service
  #&& echo -n "/opt/glpi-entrypoint.sh" | tee -a /etc/rc.d/rc.local \
  #&& chmod +x /etc/rc.d/rc.local
  #&& echo "@reboot sleep 20 && /opt/glpi-entrypoint.sh" | tee -a /var/spool/cron/root
  #&& /opt/glpi-entrypoint.sh
 
 EXPOSE 80/tcp 
-
-#CMD ["/opt/glpi-entrypoint.sh"]
 
 # Running systemd inside a docker container
 CMD ["/usr/sbin/init"]
