@@ -58,7 +58,8 @@ ADD apache/php.d /etc/php.d
 # add crontab and backup 
 ADD crond/crontab /etc/crontab
 ADD crond/crond-entrypoint.sh crond/backup.sh /
-RUN chmod 0644 /etc/crontab && chmod 755 /crond-entrypoint.sh /backup.sh
+RUN chmod 0644 /etc/crontab \
+ && chmod 755 /crond-entrypoint.sh /backup.sh
 
 # change config php-fpm
 RUN sed -E -i -e 's/;listen.owner = nobody/listen.owner = apache/g' /etc/php-fpm.d/www.conf \
@@ -92,6 +93,8 @@ RUN chmod 755 /opt/glpi-entrypoint.sh \
  #&& chmod +x /etc/rc.d/rc.local
  #&& echo "@reboot sleep 20 && /opt/glpi-entrypoint.sh" | tee -a /var/spool/cron/root
  #&& /opt/glpi-entrypoint.sh
+
+WORKDIR /var/www/glpi
 
 EXPOSE 80/tcp 
 
