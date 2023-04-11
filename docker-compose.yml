@@ -1,25 +1,31 @@
 version: "3.3"
+
 networks:
    glpiNet:
      ipam:
        driver: default
        config:
-         # Subnet Festlegen
          - subnet: ${SUBNET}.0/24
-   mariadb_mysql-net:
+   mariadb_mysqlNet:
      external: true
 
 services:
-#
-### === GLPI ===
-#
   glpi:
-    image: fametec/glpi:${VERSION}
+    image: johann8/glpi:${VERSION}
+    container_name: glpi
+    hostname: glpi
     restart: unless-stopped
     volumes:
-      - ${DOCKERDIR}/data/glpi-files:/var/www/html/files:rw
-      - ${DOCKERDIR}/data/glpi-plugins:/var/www/html/plugins:rw
-      - ${DOCKERDIR}/data/glpi-config:/var/www/html/config:rw
+      - ${DOCKERDIR}/data/glpi-files:/var/www/glpi/files:rw
+      - ${DOCKERDIR}/data/glpi-plugins:/var/www/glpi/plugins:rw
+      - ${DOCKERDIR}/data/glpi-marketplace:/var/www/glpi/marketplace:rw
+      - ${DOCKERDIR}/data/glpi-config:/var/www/glpi/config:rw
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    # Mount a temporary file system inside the container: need for systemd
+    tmpfs:
+      - /run
+    env_file:
+      - ${DOCKERDIR}/.env
     environment:
       GLPI_LANG: ${GLPI_LANG}
       TZ: ${TZ}
@@ -29,39 +35,29 @@ services:
       MARIADB_USER: ${MARIADB_USER}
       MARIADB_PASSWORD: ${MARIADB_PASSWORD}
       VERSION: ${VERSION}
-      UPLOAD_MAX_FILESIZE: ${UPLOAD_MAX_FILESIZE}
-      POST_MAX_FILESIZE: ${POST_MAX_FILESIZE}
-      #PLUGINS: ${PLUGINS}
     ports:
       - ${PORT}:80
     networks:
       glpiNet:
-        #ipv4_address: ${SUBNET}.2
         aliases:
           - glpi
-      mariadb_mysql-net:
+      mariadb_mysqlNet:
 
 #
-# === CRON ===
+### === MEMCACHED ===
 #
-  crond:
-    image: fametec/glpi:${VERSION}-crond
-    restart: unless-stopped
+  memcached:
+    image: memcached:alpine3.16
+    container_name: memcached
+    restart: always
+    depends_on:
+      - glpi
     environment:
-      TZ: ${TZ}
-      MARIADB_HOST: ${MARIADB_HOST}
-      MARIADB_PORT: ${MARIADB_PORT}
-      MARIADB_DATABASE: ${MARIADB_DATABASE}
-      MARIADB_USER: ${MARIADB_USER}
-      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
-    volumes:
-      - ${DOCKERDIR}/data/glpi-files:/var/www/html/files:rw
-      - ${DOCKERDIR}/data/glpi-plugins:/var/www/html/plugins:rw
-      - ${DOCKERDIR}/data/glpi-config:/var/www/html/config:rw
+      - TZ=${TZ}
+    env_file:
+      - ${DOCKERDIR}/.env
     networks:
       glpiNet:
-        # Feste IP setzen
-        #ipv4_address: 172.26.2.3
         aliases:
-          - glpi
-      mariadb_mysql-net:
+          - memcached
+
