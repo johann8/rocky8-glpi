@@ -57,8 +57,10 @@ ADD apache/php.d /etc/php.d
 
 # add crontab and backup 
 ADD crond/crontab /etc/crontab
+ADD crond/crontab /var/spool/cron/root
 ADD crond/crond-entrypoint.sh crond/backup.sh /
 RUN chmod 0644 /etc/crontab \
+ && chmod 0644 /var/spool/cron/root \
  && chmod 755 /crond-entrypoint.sh /backup.sh
 
 # change config php-fpm
