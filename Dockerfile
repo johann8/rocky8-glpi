@@ -78,7 +78,7 @@ RUN tar -zxf /tmp/glpi-${GLPI_VERSION}.tgz -C /tmp/ \
  && chown -R apache:apache /var/www/glpi/ \
  && rm -rf /tmp/glpi-${GLPI_VERSION}.tgz
 
-VOLUME [ "/var/www/glpi/files", "/var/www/glpi/plugins", "/sys/fs/cgroup" ]
+VOLUME [ "/var/www/glpi/files", "/var/www/glpi/plugins", "/var/www/glpi/config", "/sys/fs/cgroup" ]
 
 COPY apache/scripts/change_upload_max_filesize.php apache/scripts/default_upload_max_filesize.php apache/scripts/glpi-entrypoint.sh /opt/ 
 COPY apache/scripts/glpi-config.service /usr/lib/systemd/system/
