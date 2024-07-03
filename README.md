@@ -2,7 +2,7 @@
 
 ## Docker image
 
-Image is based on [Ubuntu 22](https://hub.docker.com/repository/docker/johann8/glpi/general)
+Image is based on [RockyLinux8](https://hub.docker.com/repository/docker/johann8/glpi/general)
 
 | pull | size ubuntu | version | platform |
 |:---------------------------------:|:--------------------------------:|:----------------------------------:|:--------------------------------:|
