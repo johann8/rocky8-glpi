@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # set variables
-_VERSION=10.0.23
+_VERSION=10.0.24
 
 # build image glpi
 docker build -t johann8/glpi:${_VERSION} .
