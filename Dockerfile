@@ -2,7 +2,7 @@ FROM rockylinux:8
 
 ENV container docker
 
-ENV GLPI_VERSION 10.0.24
+ENV GLPI_VERSION 10.0.25
 
 ENV GLPI_LANG en_US
 
