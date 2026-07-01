@@ -2,7 +2,7 @@ FROM rockylinux:8
 
 ENV container docker
 
-ENV GLPI_VERSION 10.0.25
+ENV GLPI_VERSION 10.0.26
 
 ENV GLPI_LANG en_US
 
@@ -28,7 +28,8 @@ RUN dnf -y update \
 
 RUN dnf -y install epel-release yum-utils \
  && dnf -y install https://rpms.remirepo.net/enterprise/remi-release-8.rpm \
- && dnf -y module enable php:remi-8.1 \
+# && dnf -y module enable php:remi-8.1 \
+ && dnf -y module enable php:remi-8.3 \
  && dnf -y update
 
 # Install Apache, PHP und cronie
